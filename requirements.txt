@@ -1,0 +1,7 @@
+# AgriSense - CPU-only, no GPU or deep-learning framework required.
+numpy>=1.24
+pandas>=2.0
+scikit-learn>=1.4
+pillow>=10.0
+matplotlib>=3.7
+jupyterlab>=4.0

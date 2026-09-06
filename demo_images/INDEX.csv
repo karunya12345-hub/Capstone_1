@@ -1,0 +1,31 @@
+file,true_class,expected_prediction,expected_confidence,model_correct,runner_up
+Pepper__bell___Bacterial_spot__1.jpg,Pepper__bell___Bacterial_spot,Pepper bell | Bacterial spot,0.51,yes,Tomato Early blight
+Pepper__bell___Bacterial_spot__2.jpg,Pepper__bell___Bacterial_spot,Pepper bell | Bacterial spot,0.98,yes,Tomato Septoria leaf spot
+Pepper__bell___healthy__1.jpg,Pepper__bell___healthy,Pepper bell | healthy,1.00,yes,Pepper bell | Bacterial spot
+Pepper__bell___healthy__2.jpg,Pepper__bell___healthy,Pepper bell | healthy,1.00,yes,Tomato Septoria leaf spot
+Potato___Early_blight__1.jpg,Potato___Early_blight,Potato | Early blight,1.00,yes,Tomato Septoria leaf spot
+Potato___Early_blight__2.jpg,Potato___Early_blight,Potato | Early blight,1.00,yes,Pepper bell | Bacterial spot
+Potato___Late_blight__1.jpg,Potato___Late_blight,Potato | Late blight,0.54,yes,Tomato Leaf Mold
+Potato___Late_blight__2.jpg,Potato___Late_blight,Potato | Late blight,0.95,yes,Tomato Late blight
+Potato___healthy__1.jpg,Potato___healthy,Pepper bell | healthy,0.74,NO,Potato | Late blight
+Potato___healthy__2.jpg,Potato___healthy,Potato | healthy,1.00,yes,Pepper bell | healthy
+Tomato_Bacterial_spot__1.jpg,Tomato_Bacterial_spot,Tomato Bacterial spot,0.96,yes,Tomato Early blight
+Tomato_Bacterial_spot__2.jpg,Tomato_Bacterial_spot,Tomato Bacterial spot,0.49,yes,Tomato Target Spot
+Tomato_Early_blight__1.jpg,Tomato_Early_blight,Tomato Target Spot,0.70,NO,Tomato Early blight
+Tomato_Early_blight__2.jpg,Tomato_Early_blight,Tomato Early blight,0.96,yes,Tomato Tomato YellowLeaf Curl Virus
+Tomato_Late_blight__1.jpg,Tomato_Late_blight,Tomato Septoria leaf spot,0.80,NO,Tomato Late blight
+Tomato_Late_blight__2.jpg,Tomato_Late_blight,Tomato Late blight,0.56,yes,Tomato Septoria leaf spot
+Tomato_Leaf_Mold__1.jpg,Tomato_Leaf_Mold,Tomato Leaf Mold,0.83,yes,Tomato Late blight
+Tomato_Leaf_Mold__2.jpg,Tomato_Leaf_Mold,Tomato Leaf Mold,0.99,yes,Tomato Early blight
+Tomato_Septoria_leaf_spot__1.jpg,Tomato_Septoria_leaf_spot,Tomato Septoria leaf spot,0.76,yes,Tomato Early blight
+Tomato_Septoria_leaf_spot__2.jpg,Tomato_Septoria_leaf_spot,Tomato Septoria leaf spot,0.89,yes,Tomato Bacterial spot
+Tomato_Spider_mites_Two_spotted_spider_mite__1.jpg,Tomato_Spider_mites_Two_spotted_spider_mite,Tomato Spider mites Two spotted spider mite,1.00,yes,Tomato Target Spot
+Tomato_Spider_mites_Two_spotted_spider_mite__2.jpg,Tomato_Spider_mites_Two_spotted_spider_mite,Tomato Spider mites Two spotted spider mite,0.89,yes,Tomato Target Spot
+Tomato__Target_Spot__1.jpg,Tomato__Target_Spot,Tomato Target Spot,0.67,yes,Potato | healthy
+Tomato__Target_Spot__2.jpg,Tomato__Target_Spot,Tomato Target Spot,0.51,yes,Tomato Spider mites Two spotted spider mite
+Tomato__Tomato_YellowLeaf__Curl_Virus__1.jpg,Tomato__Tomato_YellowLeaf__Curl_Virus,Tomato Tomato YellowLeaf Curl Virus,1.00,yes,Tomato Bacterial spot
+Tomato__Tomato_YellowLeaf__Curl_Virus__2.jpg,Tomato__Tomato_YellowLeaf__Curl_Virus,Tomato Tomato YellowLeaf Curl Virus,1.00,yes,Tomato Early blight
+Tomato__Tomato_mosaic_virus__1.jpg,Tomato__Tomato_mosaic_virus,Tomato Tomato mosaic virus,0.91,yes,Tomato Early blight
+Tomato__Tomato_mosaic_virus__2.jpg,Tomato__Tomato_mosaic_virus,Tomato Tomato mosaic virus,0.97,yes,Tomato Spider mites Two spotted spider mite
+Tomato_healthy__1.jpg,Tomato_healthy,Tomato healthy,1.00,yes,Tomato Target Spot
+Tomato_healthy__2.jpg,Tomato_healthy,Tomato healthy,1.00,yes,Tomato Target Spot

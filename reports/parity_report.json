@@ -1,0 +1,15 @@
+{
+  "n_images": 4,
+  "sources": [
+    "synthetic_0",
+    "synthetic_1",
+    "synthetic_2",
+    "synthetic_3"
+  ],
+  "max_abs_diff": 2.291515935337607e-12,
+  "max_rel_diff": 2.291515935337607e-12,
+  "worst_feature": "B1_B_skew",
+  "worst_feature_rel_diff": 2.291515935337607e-12,
+  "tolerance": 0.0001,
+  "passed": true
+}

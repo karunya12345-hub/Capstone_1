@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgriSense — Leaf Disease &amp; Smart Irrigation Advisory</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo" aria-hidden="true">🌿</span>
+    <div>
+      <h1>AgriSense</h1>
+      <p class="tagline">Leaf disease detection &amp; disease-aware irrigation — running entirely in your browser</p>
+    </div>
+  </div>
+  <div class="chips" id="statusChips"></div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-panel="panel-diagnose" role="tab">1 · Diagnose leaf</button>
+  <button class="tab" data-panel="panel-irrigate" role="tab">2 · Irrigation</button>
+  <button class="tab" data-panel="panel-advisory" role="tab">3 · Field advisory</button>
+  <button class="tab" data-panel="panel-about" role="tab">About the models</button>
+</nav>
+
+<main>
+
+<!-- ---------------------------------------------------------------- -->
+<section id="panel-diagnose" class="panel is-active">
+  <div class="grid two">
+    <div class="card">
+      <h2>Leaf image</h2>
+      <div id="dropzone" class="dropzone">
+        <p><strong>Drop a leaf photo here</strong></p>
+        <p class="muted">or</p>
+        <div class="row">
+          <label class="btn">Choose file<input type="file" id="fileInput" accept="image/*" hidden></label>
+          <label class="btn ghost">Use camera<input type="file" id="camInput" accept="image/*" capture="environment" hidden></label>
+        </div>
+        <p class="hint">One leaf, filling the frame, plain background, even light.</p>
+      </div>
+      <div class="preview">
+        <figure><canvas id="canvasSrc" width="160" height="160"></canvas><figcaption>Pre-processed 160×160</figcaption></figure>
+        <figure><canvas id="canvasMask" width="160" height="160"></canvas><figcaption>Leaf segmentation (ExGR + Otsu)</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Prediction</h2>
+      <div id="diseaseOut" class="empty">Load an image to run the classifier.</div>
+      <div id="noModelNote" class="note warn" hidden>
+        <strong>No disease model loaded.</strong>
+        Train it in <code>notebooks/01_disease_model.ipynb</code>, which writes
+        <code>web/models/disease_model.json</code>. Until then the feature
+        extractor still runs, so you can verify segmentation and inspect the
+        97 features below.
+        <label class="btn small">Load a model file<input type="file" id="modelInput" accept="application/json" hidden></label>
+      </div>
+      <details id="featDetails" hidden>
+        <summary>Extracted features (97)</summary>
+        <div id="featTable" class="feattable"></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------------------- -->
+<section id="panel-irrigate" class="panel">
+  <div class="grid two">
+    <div class="card">
+      <h2>Field inputs</h2>
+      <div class="fields">
+        <label>Soil type
+          <select id="in_soil">
+            <option value="sandy">Sandy</option>
+            <option value="loamy" selected>Loamy</option>
+            <option value="clayey">Clayey</option>
+          </select>
+        </label>
+        <label>Growth stage
+          <select id="in_stage">
+            <option value="initial">Initial (establishment)</option>
+            <option value="development">Development</option>
+            <option value="mid" selected>Mid-season (peak demand)</option>
+            <option value="late">Late season</option>
+            <option value="harvest">Harvest / ripening</option>
+          </select>
+        </label>
+        <label>Soil moisture <output id="o_vwc"></output>
+          <input type="range" id="in_vwc" min="4" max="45" step="0.5" value="17"></label>
+        <label>Soil temperature <output id="o_stemp"></output>
+          <input type="range" id="in_stemp" min="10" max="45" step="0.5" value="29"></label>
+        <label>Air temperature <output id="o_atemp"></output>
+          <input type="range" id="in_atemp" min="10" max="48" step="0.5" value="33"></label>
+        <label>Relative humidity <output id="o_rh"></output>
+          <input type="range" id="in_rh" min="10" max="100" step="1" value="48"></label>
+        <label>Rain, last 24 h <output id="o_rain"></output>
+          <input type="range" id="in_rain" min="0" max="60" step="0.5" value="0"></label>
+        <label>Rain forecast, next 24 h <output id="o_fcast"></output>
+          <input type="range" id="in_fcast" min="0" max="60" step="0.5" value="0"></label>
+        <label>Reference ET₀ <output id="o_et0"></output>
+          <input type="range" id="in_et0" min="0.5" max="10" step="0.1" value="5.5"></label>
+        <label>Days since last irrigation <output id="o_days"></output>
+          <input type="range" id="in_days" min="0" max="21" step="1" value="7"></label>
+      </div>
+      <div class="row gap">
+        <button class="btn small ghost" data-preset="dry">Preset: dry spell</button>
+        <button class="btn small ghost" data-preset="wet">Preset: after rain</button>
+        <button class="btn small ghost" data-preset="borderline">Preset: borderline</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Water balance &amp; decision</h2>
+      <div id="irrigationOut"></div>
+      <details>
+        <summary>How this is computed</summary>
+        <p class="muted small">
+          Total available water <code>TAW = 1000 (θ<sub>FC</sub> − θ<sub>WP</sub>) Z<sub>r</sub></code>,
+          readily available water <code>RAW = p · TAW</code>, and root-zone depletion
+          <code>D<sub>r</sub> = 1000 (θ<sub>FC</sub> − θ<sub>obs</sub>) Z<sub>r</sub></code>
+          — FAO-56 (Allen et al., 1998). The classifier sees these derived
+          quantities alongside the raw sensor readings; the regressor predicts the
+          applied depth in mm.
+        </p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------------------- -->
+<section id="panel-advisory" class="panel">
+  <div class="card">
+    <h2>Fused field advisory</h2>
+    <p class="muted">
+      The diagnosis does not change <em>whether</em> the soil needs water — it changes
+      <em>how</em> and <em>when</em> that water should be delivered. This is the coupling
+      that the surveyed literature leaves out.
+    </p>
+    <div id="advisoryOut"></div>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------------------- -->
+<section id="panel-about" class="panel">
+  <div class="card">
+    <h2>Models in this page</h2>
+    <div id="aboutOut"></div>
+    <h3>Why classical machine learning</h3>
+    <p>
+      Published CNNs reach 99%+ on the PlantVillage benchmark, but weigh tens to
+      hundreds of megabytes and need a server at inference time. This page carries
+      hand-designed colour, lesion-chromaticity, GLCM texture, LBP and shape
+      features into a conventional classifier, so the deployed model is small
+      enough to ship inside the page itself. Nothing you load here leaves your
+      device, and the page keeps working with the network switched off.
+    </p>
+    <h3>Honest limitations</h3>
+    <ul>
+      <li>The disease model is trained on laboratory-condition imagery. Accuracy on
+        real field photographs is measurably lower — the project reports that gap
+        rather than hiding it.</li>
+      <li>The irrigation model learns the FAO-56 reference policy from noisy
+        sensor observations. Its residual error is dominated by soil-moisture
+        sensor noise, not by model capacity.</li>
+      <li>This is decision support, not a prescription. Confirm any treatment with
+        a local extension officer before applying agro-chemicals.</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>AgriSense · classical ML · client-side inference · no server, no tracking, no network calls after load</p>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
